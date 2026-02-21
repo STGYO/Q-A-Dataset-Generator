@@ -117,7 +117,7 @@ if run_button:
                 max_tokens=int(max_tokens),
             )
         except Exception as e:
-            st.error(f"Failed to initialise LLM client: {e}")
+            st.error(f"Failed to initialize LLM client: {e}")
             st.stop()
 
         text_cols = [c.strip() for c in text_columns_input.split(",") if c.strip()] or None

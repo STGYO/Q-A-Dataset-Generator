@@ -1,4 +1,4 @@
-"""Export Q&A datasets to JSON and JSONL with customisable schemas."""
+"""Export Q&A datasets to JSON and JSONL with customizable schemas."""
 
 from __future__ import annotations
 

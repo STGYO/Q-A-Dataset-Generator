@@ -133,7 +133,7 @@ def generate(
             max_tokens=max_tokens,
         )
     except Exception as e:
-        console.print(f"[red]Failed to create LLM client:[/red] {e}")
+        console.print(f"[red]Failed to initialize LLM client:[/red] {e}")
         raise typer.Exit(1)
 
     try:

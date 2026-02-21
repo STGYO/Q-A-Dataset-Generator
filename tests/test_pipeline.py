@@ -35,7 +35,7 @@ def test_pipeline_txt_to_jsonl(tmp_path):
     input_file = tmp_path / "doc.txt"
     input_file.write_text(
         "Python is a versatile programming language created by Guido van Rossum. "
-        "It emphasises readability and simplicity. " * 10,
+        "It emphasizes readability and simplicity. " * 10,
         encoding="utf-8",
     )
     output_file = tmp_path / "out.jsonl"

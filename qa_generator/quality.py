@@ -91,7 +91,7 @@ def deduplicate(
     q_key: str = "question",
     a_key: str = "answer",
 ) -> List[Dict[str, str]]:
-    """Remove duplicate Q&A pairs (case-insensitive, whitespace-normalised)."""
+    """Remove duplicate Q&A pairs (case-insensitive, whitespace-normalized)."""
     seen: set = set()
     unique: List[Dict[str, str]] = []
     for pair in pairs:
