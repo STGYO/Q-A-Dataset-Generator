@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +19,14 @@ def apply_schema(
     question_key: str = "question",
     answer_key: str = "answer",
     include_score: bool = True,
+    src_question_key: str = "question",
+    src_answer_key: str = "answer",
 ) -> List[Dict]:
-    """Rename ``question``/``answer`` fields to the user-supplied key names.
+    """Rename question/answer fields to the user-supplied output key names.
+
+    *question_key* and *answer_key* define the OUTPUT field names.
+    *src_question_key* and *src_answer_key* define the SOURCE (internal) field
+    names to read from — they default to ``"question"`` and ``"answer"``.
 
     Any extra metadata keys (e.g. ``chunk_index``, ``_score``) are preserved
     unless *include_score* is ``False``.
@@ -28,14 +34,14 @@ def apply_schema(
     output = []
     for pair in pairs:
         record: Dict = {}
-        # Map generic keys to custom keys
-        if "question" in pair:
-            record[question_key] = pair["question"]
-        if "answer" in pair:
-            record[answer_key] = pair["answer"]
+        # Map source keys to output keys
+        if src_question_key in pair:
+            record[question_key] = pair[src_question_key]
+        if src_answer_key in pair:
+            record[answer_key] = pair[src_answer_key]
         # Copy remaining metadata
         for k, v in pair.items():
-            if k in ("question", "answer"):
+            if k in (src_question_key, src_answer_key):
                 continue
             if k == "_score" and not include_score:
                 continue

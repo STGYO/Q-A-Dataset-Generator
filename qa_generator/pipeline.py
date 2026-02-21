@@ -96,8 +96,8 @@ def run_pipeline(
     logger.info("Filtering %d raw pairs (min_score=%.2f) …", len(all_pairs), min_quality_score)
     filtered = filter_pairs(
         all_pairs,
-        q_key="question",
-        a_key="answer",
+        q_key=question_key,
+        a_key=answer_key,
         min_score=min_quality_score,
     )
 

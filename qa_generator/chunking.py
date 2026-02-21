@@ -47,10 +47,9 @@ def _split_text(
                     else:
                         chunks.append(chunk)
                 # Keep overlap
-                while current and current_len > chunk_overlap:
-                    removed = current.pop(0)
-                    current_len -= len(removed) + len(separator)
-                    current_len = max(0, current_len)
+                while current and sum(len(s) for s in current) + len(separator) * (len(current) - 1) > chunk_overlap:
+                    current.pop(0)
+                current_len = sum(len(s) for s in current) + len(separator) * max(0, len(current) - 1)
 
         current.append(split)
         current_len += split_len + (len(separator) if len(current) > 1 else 0)
