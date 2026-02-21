@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
@@ -41,11 +42,12 @@ class LLMResponse:
 # ---------------------------------------------------------------------------
 
 
-class BaseLLMClient:
+class BaseLLMClient(ABC):
     """Abstract base class for LLM clients."""
 
-    def complete(self, prompt: str, **kwargs: Any) -> LLMResponse:  # pragma: no cover
-        raise NotImplementedError
+    @abstractmethod
+    def complete(self, prompt: str, **kwargs: Any) -> LLMResponse:
+        ...
 
 
 # ---------------------------------------------------------------------------
@@ -150,29 +152,30 @@ class GeminiClient(BaseLLMClient):
         self.api_key = api_key
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self._model: Any = None
+
+    def _get_model(self) -> Any:
+        if self._model is None:
+            try:
+                import google.generativeai as genai
+            except ImportError as exc:
+                raise ImportError(
+                    "google-generativeai package required. "
+                    "Install it with `pip install google-generativeai`."
+                ) from exc
+            if self.api_key:
+                genai.configure(api_key=self.api_key)
+            self._model = genai.GenerativeModel(
+                self.model,
+                generation_config={
+                    "temperature": self.temperature,
+                    "max_output_tokens": self.max_tokens,
+                },
+            )
+        return self._model
 
     def complete(self, prompt: str, **kwargs: Any) -> LLMResponse:
-        try:
-            import google.generativeai as genai
-        except ImportError as exc:
-            raise ImportError(
-                "google-generativeai package required. "
-                "Install it with `pip install google-generativeai`."
-            ) from exc
-
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
-
-        generation_config = {
-            "temperature": kwargs.get("temperature", self.temperature),
-            "max_output_tokens": kwargs.get("max_tokens", self.max_tokens),
-        }
-
-        model = genai.GenerativeModel(
-            self.model,
-            generation_config=generation_config,
-        )
-
+        model = self._get_model()
         start = time.perf_counter()
         response = model.generate_content(prompt)
         latency = time.perf_counter() - start

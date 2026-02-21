@@ -57,11 +57,11 @@ class BenchmarkTracker:
 
     def start_run(self) -> None:
         self._total_timer = Timer()
-        self._total_timer.start = time.perf_counter()
+        self._total_timer.__enter__()
 
     def stop_run(self) -> None:
         if self._total_timer is not None:
-            self._total_timer.elapsed = time.perf_counter() - self._total_timer.start
+            self._total_timer.__exit__(None, None, None)
 
     @property
     def total_elapsed(self) -> float:
